@@ -17,7 +17,7 @@
 
          (testing "alts!! inside go emits warning"
                   (assert-submaps2
-                    '({:file "<stdin>", :level :warning,
+                    '({:file "<stdin>", :row 1, :col 45, :level :warning,
                        :message "blocking operation inside go block"})
                     (lint! "(require '[clojure.core.async :as a]) (a/go (a/alts!! [(a/chan)]))")))
 
@@ -35,13 +35,13 @@
 
          (testing "nested expression inside go emits warning"
                   (assert-submaps2
-                    '({:file "<stdin>", :level :warning,
+                    '({:file "<stdin>", :row 1, :col 54, :level :warning,
                        :message "blocking operation inside go block"})
                     (lint! "(require '[clojure.core.async :as a]) (a/go (println (a/<!! (a/chan))))")))
 
          (testing "deeper nesting inside go emits warning"
                   (assert-submaps2
-                    '({:file "<stdin>", :level :warning,
+                    '({:file "<stdin>", :row 1, :col 67, :level :warning,
                        :message "blocking operation inside go block"})
                     (lint! "(require '[clojure.core.async :as a]) (a/go (let [x 1] (when true (a/<!! (a/chan)))))")))
 
@@ -57,31 +57,31 @@
 
          (testing "<!! inside go-loop emits warning"
                   (assert-submaps2
-                    '({:file "<stdin>", :level :warning,
+                    '({:file "<stdin>", :row 1, :col 53, :level :warning,
                        :message "blocking operation inside go block"})
                     (lint! "(require '[clojure.core.async :as a]) (a/go-loop [] (a/<!! (a/chan)) (recur))")))
 
          (testing ">!! inside go-loop emits warning"
                   (assert-submaps2
-                    '({:file "<stdin>", :level :warning,
+                    '({:file "<stdin>", :row 1, :col 53, :level :warning,
                        :message "blocking operation inside go block"})
                     (lint! "(require '[clojure.core.async :as a]) (a/go-loop [] (a/>!! (a/chan) 1) (recur))")))
 
          (testing "alts!! inside go-loop emits warning"
                   (assert-submaps2
-                    '({:file "<stdin>", :level :warning,
+                    '({:file "<stdin>", :row 1, :col 53, :level :warning,
                        :message "blocking operation inside go block"})
                     (lint! "(require '[clojure.core.async :as a]) (a/go-loop [] (a/alts!! [(a/chan)]) (recur))")))
 
          (testing "nested blocking inside go-loop emits warning"
                   (assert-submaps2
-                    '({:file "<stdin>", :level :warning,
+                    '({:file "<stdin>", :row 1, :col 62, :level :warning,
                        :message "blocking operation inside go block"})
                     (lint! "(require '[clojure.core.async :as a]) (a/go-loop [] (println (a/<!! (a/chan))) (recur))")))
 
          (testing "deeper nesting inside go-loop emits warning"
                   (assert-submaps2
-                    '({:file "<stdin>", :level :warning,
+                    '({:file "<stdin>", :row 1, :col 75, :level :warning,
                        :message "blocking operation inside go block"})
                     (lint! "(require '[clojure.core.async :as a]) (a/go-loop [] (let [x 1] (when true (a/<!! (a/chan)))) (recur))"))))
 
