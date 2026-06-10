@@ -325,6 +325,20 @@
                                       :message (or (:message cfg)
                                                    (str "Discouraged method: " method-name))))))))
 
+(defn lint-discouraged-class! [ctx class-name loc+data]
+  (let [discouraged-class-config
+        (get-in (:config ctx) [:linters :discouraged-java-class])]
+    (when-not (or (identical? :off (:level discouraged-class-config))
+                  (empty? (dissoc discouraged-class-config :level)))
+      (when-let [cfg (get discouraged-class-config (symbol class-name))]
+        (findings/reg-finding! ctx
+                               (assoc loc+data
+                                      :filename (:filename ctx)
+                                      :level (or (:level cfg) (:level discouraged-class-config))
+                                      :type :discouraged-java-class
+                                      :message (or (:message cfg)
+                                                   (str "Discouraged class: " class-name))))))))
+
 (defn reg-class-usage!
   ([ctx class-name method-name loc+data]
    (reg-class-usage! ctx class-name method-name loc+data nil nil))
@@ -338,6 +352,7 @@
      (when method-name
        (lint-discouraged-method! ctx class-name method-name
                                  loc+data))
+     (lint-discouraged-class! ctx class-name loc+data)
      (swap! (:java-class-usages ctx)
             conj
             (merge {:class class-name
